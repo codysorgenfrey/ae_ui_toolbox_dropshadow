@@ -7,20 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		05F87594228C7175004727C8 /* DropShadowPiPL.r in Rez */ = {isa = PBXBuildFile; fileRef = 05F8758F228C7174004727C8 /* DropShadowPiPL.r */; };
-		05F87595228C7175004727C8 /* DropShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05F87590228C7174004727C8 /* DropShadow.cpp */; };
-		05F87596228C7175004727C8 /* DropShadow_Strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05F87591228C7175004727C8 /* DropShadow_Strings.cpp */; };
+		05F875A4228C97BD004727C8 /* UIDropShadow_Strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05F8759F228C97BD004727C8 /* UIDropShadow_Strings.cpp */; };
+		05F875A5228C97BD004727C8 /* UIDropShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05F875A0228C97BD004727C8 /* UIDropShadow.cpp */; };
+		05F875A6228C97BD004727C8 /* UIDropShadowPiPL.r in Rez */ = {isa = PBXBuildFile; fileRef = 05F875A3228C97BD004727C8 /* UIDropShadowPiPL.r */; };
 		7EF36FB716F29701002A3CB3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EF36FB616F29701002A3CB3 /* Cocoa.framework */; };
 		D0FE579D0993C5E500139A60 /* AEGP_SuiteHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0FE579A0993C5E500139A60 /* AEGP_SuiteHandler.cpp */; };
 		D0FE579E0993C5E500139A60 /* MissingSuiteError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0FE579C0993C5E500139A60 /* MissingSuiteError.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		05F8758F228C7174004727C8 /* DropShadowPiPL.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; name = DropShadowPiPL.r; path = ../DropShadowPiPL.r; sourceTree = "<group>"; };
-		05F87590228C7174004727C8 /* DropShadow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DropShadow.cpp; path = ../DropShadow.cpp; sourceTree = "<group>"; };
-		05F87591228C7175004727C8 /* DropShadow_Strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DropShadow_Strings.cpp; path = ../DropShadow_Strings.cpp; sourceTree = "<group>"; };
-		05F87592228C7175004727C8 /* DropShadow_Strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DropShadow_Strings.h; path = ../DropShadow_Strings.h; sourceTree = "<group>"; };
-		05F87593228C7175004727C8 /* DropShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DropShadow.h; path = ../DropShadow.h; sourceTree = "<group>"; };
+		05F8759F228C97BD004727C8 /* UIDropShadow_Strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIDropShadow_Strings.cpp; path = ../UIDropShadow_Strings.cpp; sourceTree = "<group>"; };
+		05F875A0228C97BD004727C8 /* UIDropShadow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIDropShadow.cpp; path = ../UIDropShadow.cpp; sourceTree = "<group>"; };
+		05F875A1228C97BD004727C8 /* UIDropShadow_Strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIDropShadow_Strings.h; path = ../UIDropShadow_Strings.h; sourceTree = "<group>"; };
+		05F875A2228C97BD004727C8 /* UIDropShadow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIDropShadow.h; path = ../UIDropShadow.h; sourceTree = "<group>"; };
+		05F875A3228C97BD004727C8 /* UIDropShadowPiPL.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; name = UIDropShadowPiPL.r; path = ../UIDropShadowPiPL.r; sourceTree = "<group>"; };
 		7E76EECF1F707EF300536F9D /* AE_PluginData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AE_PluginData.h; path = ../../../Headers/AE_PluginData.h; sourceTree = "<group>"; };
 		7E76EED01F707F0400536F9D /* AE_Effect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AE_Effect.h; path = ../../../Headers/AE_Effect.h; sourceTree = "<group>"; };
 		7EF36FB616F29701002A3CB3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -45,11 +45,11 @@
 		C4E6187C095A3C800012CA3F = {
 			isa = PBXGroup;
 			children = (
-				05F87591228C7175004727C8 /* DropShadow_Strings.cpp */,
-				05F87592228C7175004727C8 /* DropShadow_Strings.h */,
-				05F87590228C7174004727C8 /* DropShadow.cpp */,
-				05F87593228C7175004727C8 /* DropShadow.h */,
-				05F8758F228C7174004727C8 /* DropShadowPiPL.r */,
+				05F8759F228C97BD004727C8 /* UIDropShadow_Strings.cpp */,
+				05F875A1228C97BD004727C8 /* UIDropShadow_Strings.h */,
+				05F875A0228C97BD004727C8 /* UIDropShadow.cpp */,
+				05F875A2228C97BD004727C8 /* UIDropShadow.h */,
+				05F875A3228C97BD004727C8 /* UIDropShadowPiPL.r */,
 				D0FE57630993C4FD00139A60 /* Supporting Code */,
 				7EF36FB616F29701002A3CB3 /* Cocoa.framework */,
 				C4E6188C095A3C800012CA3F /* Products */,
@@ -105,7 +105,7 @@
 			attributes = {
 				LastUpgradeCheck = 0720;
 			};
-			buildConfigurationList = C4E6187F095A3C800012CA3F /* Build configuration list for PBXProject "DropShadow" */;
+			buildConfigurationList = C4E6187F095A3C800012CA3F /* Build configuration list for PBXProject "UIDropShadow" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -138,7 +138,7 @@
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05F87594228C7175004727C8 /* DropShadowPiPL.r in Rez */,
+				05F875A6228C97BD004727C8 /* UIDropShadowPiPL.r in Rez */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,9 +150,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D0FE579D0993C5E500139A60 /* AEGP_SuiteHandler.cpp in Sources */,
+				05F875A4228C97BD004727C8 /* UIDropShadow_Strings.cpp in Sources */,
+				05F875A5228C97BD004727C8 /* UIDropShadow.cpp in Sources */,
 				D0FE579E0993C5E500139A60 /* MissingSuiteError.cpp in Sources */,
-				05F87595228C7175004727C8 /* DropShadow.cpp in Sources */,
-				05F87596228C7175004727C8 /* DropShadow_Strings.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,7 +206,7 @@
 					../../../Headers/SP,
 					../../../Resources,
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/DropShadow.plugin-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/UIDropShadow.plugin-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = com.codysorgenfrey.uidropshadow;
 				PRODUCT_NAME = UIDropShadow;
@@ -218,7 +218,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C4E6187F095A3C800012CA3F /* Build configuration list for PBXProject "DropShadow" */ = {
+		C4E6187F095A3C800012CA3F /* Build configuration list for PBXProject "UIDropShadow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C4E61880095A3C800012CA3F /* Debug */,

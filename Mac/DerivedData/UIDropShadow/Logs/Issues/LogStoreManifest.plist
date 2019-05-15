@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>logFormatVersion</key>
+	<integer>10</integer>
+	<key>logs</key>
+	<dict>
+		<key>D401A14E-CAB2-4AF6-8861-BDE7630F8D78</key>
+		<dict>
+			<key>className</key>
+			<string>IDEActivityLogSection</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.target.product-type.bundle</string>
+			<key>fileName</key>
+			<string>D401A14E-CAB2-4AF6-8861-BDE7630F8D78.xcactivitylog</string>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+			</dict>
+			<key>signature</key>
+			<string>UIDropShadow-efpnxfzvizwdhhbsuijtlxgehwbg</string>
+			<key>timeStartedRecording</key>
+			<real>579639552.32739401</real>
+			<key>timeStoppedRecording</key>
+			<real>579639558.16616094</real>
+			<key>title</key>
+			<string>Build target UIDropShadow</string>
+			<key>uniqueIdentifier</key>
+			<string>D401A14E-CAB2-4AF6-8861-BDE7630F8D78</string>
+		</dict>
+	</dict>
+	<key>preserveOldLogs</key>
+	<true/>
+</dict>
+</plist>
