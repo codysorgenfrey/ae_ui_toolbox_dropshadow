@@ -16,17 +16,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SkeletonPiPL.rc">
-      <Filter>Resources</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Skeleton.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Skeleton_Strings.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Headers\A.h">
       <Filter>Headers\AE</Filter>
     </ClInclude>
@@ -84,6 +73,12 @@
     <ClInclude Include="..\..\..\Headers\AE_PluginData.h">
       <Filter>Headers\AE</Filter>
     </ClInclude>
+    <ClInclude Include="..\UIDropShadow.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\UIDropShadow_Strings.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Util\AEGP_SuiteHandler.cpp">
@@ -92,12 +87,17 @@
     <ClCompile Include="..\..\..\Util\MissingSuiteError.cpp">
       <Filter>Supporting code</Filter>
     </ClCompile>
-    <ClCompile Include="..\Skeleton.cpp" />
-    <ClCompile Include="..\Skeleton_Strings.cpp" />
+    <ClCompile Include="..\UIDropShadow_Strings.cpp" />
+    <ClCompile Include="..\UIDropShadow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\SkeletonPiPL.r">
+    <CustomBuild Include="..\UIDropShadowPiPL.r">
       <Filter>Resources</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="UIDropShadowPiPL.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

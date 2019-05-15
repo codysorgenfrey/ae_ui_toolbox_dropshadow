@@ -32,7 +32,7 @@ typedef short int			int16;
 #include "AEFX_ChannelDepthTpl.h"
 #include "AEGP_SuiteHandler.h"
 
-#include "DropShadow_Strings.h"
+#include "UIDropShadow_Strings.h"
 
 /* Versioning information */
 
