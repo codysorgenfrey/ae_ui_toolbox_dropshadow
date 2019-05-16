@@ -65,7 +65,7 @@ ParamsSetup (
 		DROPSHADOW_OFFSET_MAX,
 		DROPSHADOW_OFFSET_MIN,
 		DROPSHADOW_OFFSET_MAX,
-		DROPSHADOW_OFFSET_DFLT,
+		DROPSHADOW_OFFSETX_DFLT,
 		PF_Precision_HUNDREDTHS,
 		0,
 		0,
@@ -77,7 +77,7 @@ ParamsSetup (
 		DROPSHADOW_OFFSET_MAX,
 		DROPSHADOW_OFFSET_MIN,
 		DROPSHADOW_OFFSET_MAX,
-		DROPSHADOW_OFFSET_DFLT,
+		DROPSHADOW_OFFSETY_DFLT,
 		PF_Precision_HUNDREDTHS,
 		0,
 		0,
@@ -108,6 +108,24 @@ ParamsSetup (
 }
 
 static PF_Err
+ColorPixels (
+          void        *refcon,
+          A_long        xL,
+          A_long        yL,
+          PF_Pixel8    *inP,
+          PF_Pixel8    *outP)
+{
+    PF_Err err = PF_Err_NONE;
+    PixelInfo *pi = reinterpret_cast<PixelInfo*>(refcon);
+    
+    //Set pixel color but not alpha
+    outP->red = pi->color.red;
+    outP->green = pi->color.green;
+    outP->blue = pi->color.blue;
+    return err;
+}
+
+static PF_Err
 KnockOut (
     void        *refcon,
     A_long        xL,
@@ -116,9 +134,8 @@ KnockOut (
     PF_Pixel8    *outP)
 {
     PF_Err err = PF_Err_NONE;
-	PixelInfo *pi = reinterpret_cast<PixelInfo*>(refcon);
-
-	outP = &pi->color;
+    
+    //Knock out alpha if original image had alpha "on"
 	if (inP->alpha > 0)
 		outP->alpha = 0;
     return err;
@@ -133,20 +150,21 @@ Render (
 {
     AEGP_SuiteHandler suites(in_data->pica_basicP);
     PF_Err err = PF_Err_NONE;
-    //PF_LayerDef *input = &params[DROPSHADOW_INPUT]->u.ld;
 	
 	//Check out myself for input to get original layer alpha for stackability
-	AEGP_RenderOptionsH renderOptionsH;
-
-	AEGP_FrameReceiptH frameRecieptH;
-	ERR(suites.RenderSuite4()->AEGP_RenderAndCheckoutFrame(renderOptionsH,
-		NULL,
-		NULL,
-		&frameRecieptH));
-
+    PF_ParamDef checkoutParam;
+    AEFX_CLR_STRUCT(checkoutParam);
+    ERR(PF_CHECKOUT_PARAM(in_data,
+                          DROPSHADOW_INPUT,
+                          in_data->current_time,
+                          in_data->time_step,
+                          in_data->time_scale,
+                          &checkoutParam));
+    PF_LayerDef *sourceInput = &checkoutParam.u.ld;
+    
     // Make new empty AEGP_WorldH
     AEGP_WorldH newWorld;
-    ERR(suites.WorldSuite3()->AEGP_New(NULL, AEGP_WorldType_8, input->width, input->height, &newWorld));
+    ERR(suites.WorldSuite3()->AEGP_New(NULL, AEGP_WorldType_8, sourceInput->width, sourceInput->height, &newWorld));
         
     //Copy PF_EffectWorld data into new AEGP_World
     A_u_long rowbytes = 0;
@@ -155,10 +173,10 @@ Render (
     ERR(suites.WorldSuite3()->AEGP_GetBaseAddr8(newWorld, (PF_Pixel8**) &data));
         
     auto dst = (char*) data;
-    auto src = (char*) input->data;
-    for(int y=0; y<input->height; y++){
+    auto src = (char*) sourceInput->data;
+    for(int y=0; y<sourceInput->height; y++){
         memcpy(dst, src, rowbytes);
-        src += input->rowbytes;
+        src += sourceInput->rowbytes;
         dst += rowbytes;
     }
         
@@ -167,28 +185,86 @@ Render (
                                             PF_MF_Alpha_STRAIGHT,
                                             PF_Quality_HI,
                                             newWorld));
+    
+    
         
-    //Convert the AEGP_World data into a PF_EffectWorld
+    //Convert the AEGP_World data into a tmpEffectWorld
     PF_EffectWorld tmpEffectWorld;
     ERR(suites.WorldSuite3()->AEGP_FillOutPFEffectWorld(newWorld, &tmpEffectWorld));
+    
+    //Color pixels
+    PixelInfo pi;
+    AEFX_CLR_STRUCT(pi);
+    pi.color = params[DROPSHADOW_COLOR]->u.cd.value;
+    
+    ERR(suites.Iterate8Suite1()->iterate(in_data,
+                                         0, // progress base
+                                         tmpEffectWorld.height, // progress final
+                                         &tmpEffectWorld, // src
+                                         NULL, // area - null for all pixels
+                                         (void*)&pi, // refcon - your custom data pointer
+                                         ColorPixels, // pixel function pointer
+                                         &tmpEffectWorld));
+    
+    //Transform the effect world and composite over input
+    ERR(PF_COPY(&params[DROPSHADOW_INPUT]->u.ld, output, NULL, NULL));
+    
+    PF_CompositeMode blendMode;
+    AEFX_CLR_STRUCT(blendMode);
+    blendMode.opacity = static_cast<int>((FIX_2_FLOAT(params[DROPSHADOW_OPACITY]->u.fd.value) * 0.01) * PF_MAX_CHAN8);
+    switch (params[DROPSHADOW_BLEND]->u.pd.value) {
+        case BLEND_NORMAL: blendMode.xfer = PF_Xfer_IN_FRONT; break;
+        case BLEND_DARKEN: blendMode.xfer = PF_Xfer_DARKEN; break;
+        case BLEND_MULTIPLY: blendMode.xfer = PF_Xfer_MULTIPLY; break;
+        case BLEND_COLORBURN: blendMode.xfer = PF_Xfer_COLOR_BURN; break;
+        case BLEND_LIGHTEN: blendMode.xfer = PF_Xfer_LIGHTEN; break;
+        case BLEND_SCREEN: blendMode.xfer = PF_Xfer_SCREEN; break;
+        case BLEND_COLORDODGE: blendMode.xfer = PF_Xfer_COLOR_DODGE; break;
+        case BLEND_OVERLAY: blendMode.xfer = PF_Xfer_OVERLAY; break;
+        case BLEND_SOFTLIGHT: blendMode.xfer = PF_Xfer_SOFT_LIGHT; break;
+        case BLEND_HARDLIGHT: blendMode.xfer = PF_Xfer_HARD_LIGHT; break;
+        case BLEND_DIFFERENCE: blendMode.xfer = PF_Xfer_DIFFERENCE; break;
+        case BLEND_EXCLUSION: blendMode.xfer = PF_Xfer_EXCLUSION; break;
+        case BLEND_HUE: blendMode.xfer = PF_Xfer_HUE; break;
+        case BLEND_SATURATION: blendMode.xfer = PF_Xfer_SATURATION; break;
+        case BLEND_COLOR: blendMode.xfer = PF_Xfer_COLOR; break;
+        case BLEND_LUMINOSITY: blendMode.xfer = PF_Xfer_LUMINOSITY; break;
+        default: blendMode.xfer = PF_Xfer_NONE; break;
+    }
+    
+    PF_FloatMatrix float_matrix;
+    AEFX_CLR_STRUCT(float_matrix.mat);
+    float_matrix.mat[0][0] = float_matrix.mat[1][1] = float_matrix.mat[2][2] = 1;
+    float_matrix.mat[2][0] = params[DROPSHADOW_OFFSETX]->u.fs_d.value; // This is the x translation
+    float_matrix.mat[2][1] = params[DROPSHADOW_OFFSETY]->u.fs_d.value; // This is the y translation
+    
+    ERR(in_data->utils->transform_world(in_data->effect_ref,
+                                        in_data->quality,
+                                        PF_MF_Alpha_STRAIGHT,
+                                        in_data->field,
+                                        &tmpEffectWorld,
+                                        &blendMode,
+                                        NULL,
+                                        &float_matrix,
+                                        1,
+                                        TRUE,
+                                        &output->extent_hint,
+                                        output));
         
-    //Knock out input's alpha in the effectworld and color pixels
-	PixelInfo pi;
-	AEFX_CLR_STRUCT(pi);
-	pi.color = params[DROPSHADOW_COLOR]->u.cd.value;
-
+    //Knock out sourceInput's alpha in the effectworld and color pixels
     ERR(suites.Iterate8Suite1()->iterate(in_data,
                                             0, // progress base
-                                            input->height, // progress final
-                                            input, // src
+                                            sourceInput->height, // progress final
+                                            sourceInput, // src
                                             NULL, // area - null for all pixels
                                             (void*)&pi, // refcon - your custom data pointer
                                             KnockOut, // pixel function pointer
-                                            &tmpEffectWorld));
-        
-    //Copy the tmpEffectWorld to the output LayerDef
-    ERR(PF_COPY(&tmpEffectWorld, output, NULL, NULL));
-        
+                                            output));
+    
+    
+    //Check in sourceInput
+    ERR(PF_CHECKIN_PARAM(in_data, &checkoutParam));
+    
     //Clean up worldH
     ERR(suites.WorldSuite3()->AEGP_Dispose(newWorld));
 	

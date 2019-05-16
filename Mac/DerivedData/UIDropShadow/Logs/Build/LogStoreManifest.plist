@@ -6,7 +6,7 @@
 	<integer>10</integer>
 	<key>logs</key>
 	<dict>
-		<key>2654792C-482E-4DA8-8691-CD5031EBDD2E</key>
+		<key>65AB0FCD-E0D8-424F-972C-306EC718A9DE</key>
 		<dict>
 			<key>className</key>
 			<string>IDEActivityLogSection</string>
@@ -15,7 +15,7 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>2654792C-482E-4DA8-8691-CD5031EBDD2E.xcactivitylog</string>
+			<string>65AB0FCD-E0D8-424F-972C-306EC718A9DE.xcactivitylog</string>
 			<key>primaryObservable</key>
 			<dict>
 				<key>highLevelStatus</key>
@@ -24,19 +24,19 @@
 			<key>schemeIdentifier-containerName</key>
 			<string>UIDropShadow project</string>
 			<key>schemeIdentifier-schemeName</key>
-			<string>DropShadow</string>
+			<string>UIDropShadow</string>
 			<key>schemeIdentifier-sharedScheme</key>
 			<integer>1</integer>
 			<key>signature</key>
 			<string>Build UIDropShadow</string>
 			<key>timeStartedRecording</key>
-			<real>579639552.24948394</real>
+			<real>579683352.16748405</real>
 			<key>timeStoppedRecording</key>
-			<real>579639558.20360398</real>
+			<real>579683353.95005</real>
 			<key>title</key>
 			<string>Build UIDropShadow</string>
 			<key>uniqueIdentifier</key>
-			<string>2654792C-482E-4DA8-8691-CD5031EBDD2E</string>
+			<string>65AB0FCD-E0D8-424F-972C-306EC718A9DE</string>
 		</dict>
 	</dict>
 </dict>
