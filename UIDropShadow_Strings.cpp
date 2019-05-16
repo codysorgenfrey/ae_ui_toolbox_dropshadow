@@ -11,6 +11,7 @@ TableString		g_strs[StrID_NUMTYPES] = {
 	StrID_NONE,						"",
 	StrID_Name,						"UI Drop Shadow",
 	StrID_Description,				"Creates a stackable drop shadow with no shadow underneath the layer.",
+    StrID_Comp_Param_Name,          "Composite Over Layer",
 	StrID_Blur_Param_Name,			"Blur",
 	StrID_Offsetx_Param_Name,		"X",
 	StrID_Offsety_Param_Name,		"Y",

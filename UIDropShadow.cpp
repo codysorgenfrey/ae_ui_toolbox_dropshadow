@@ -25,10 +25,10 @@ GlobalSetup (
 	PF_ParamDef		*params[],
 	PF_LayerDef		*output )
 {
-	out_data->my_version = PF_VERSION(	MAJOR_VERSION, 
+	out_data->my_version = PF_VERSION(	MAJOR_VERSION,
 										MINOR_VERSION,
-										BUG_VERSION, 
-										STAGE_VERSION, 
+										BUG_VERSION,
+										STAGE_VERSION,
 										BUILD_VERSION);
 
     out_data->out_flags =  PF_OutFlag_I_EXPAND_BUFFER;
@@ -46,8 +46,16 @@ ParamsSetup (
 {
 	PF_Err err = PF_Err_NONE;
 	PF_ParamDef	def; // used in the macros
-
+    
+    
+    //Composite over layer
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_LAYER(STR(StrID_Comp_Param_Name),
+                 PF_LayerDefault_MYSELF,
+                 COMP_DISK_ID);
+    
 	//Blur
+    AEFX_CLR_STRUCT(def);
 	PF_ADD_FLOAT_SLIDERX(STR(StrID_Blur_Param_Name),
 		DROPSHADOW_BLUR_MIN,
 		DROPSHADOW_BLUR_MAX,
@@ -60,6 +68,7 @@ ParamsSetup (
 		BLUR_DISK_ID);
 
 	//Offset x
+    AEFX_CLR_STRUCT(def);
 	PF_ADD_FLOAT_SLIDERX(STR(StrID_Offsetx_Param_Name),
 		DROPSHADOW_OFFSET_MIN,
 		DROPSHADOW_OFFSET_MAX,
@@ -72,6 +81,7 @@ ParamsSetup (
 		OFFSETX_DISK_ID);
 
 	//Offset y
+    AEFX_CLR_STRUCT(def);
 	PF_ADD_FLOAT_SLIDERX(STR(StrID_Offsety_Param_Name),
 		DROPSHADOW_OFFSET_MIN,
 		DROPSHADOW_OFFSET_MAX,
@@ -84,6 +94,7 @@ ParamsSetup (
 		OFFSETY_DISK_ID);
 
 	//Color
+    AEFX_CLR_STRUCT(def);
 	PF_ADD_COLOR(STR(StrID_Color_Param_Name),
 		DROPSHADOW_COLOR_R_DFLT,
 		DROPSHADOW_COLOR_G_DFLT, 
@@ -91,11 +102,13 @@ ParamsSetup (
 		COLOR_DISK_ID);
 
 	//Opacity
+    AEFX_CLR_STRUCT(def);
 	PF_ADD_PERCENT(STR(StrID_Opacity_Param_Name),
 		DROPSHADOW_OPACITY_DFLT,
 		OPACITY_DISK_ID);
 
 	//blend mode
+    AEFX_CLR_STRUCT(def);
 	PF_ADD_POPUP(STR(StrID_Blend_Param_Name), 
 		BLEND_LUMINOSITY,
 		BLEND_NORMAL,
@@ -152,15 +165,15 @@ Render (
     PF_Err err = PF_Err_NONE;
 	
 	//Check out myself for input to get original layer alpha for stackability
-    PF_ParamDef checkoutParam;
-    AEFX_CLR_STRUCT(checkoutParam);
+    PF_ParamDef checkoutMyself;
+    AEFX_CLR_STRUCT(checkoutMyself);
     ERR(PF_CHECKOUT_PARAM(in_data,
                           DROPSHADOW_INPUT,
                           in_data->current_time,
                           in_data->time_step,
                           in_data->time_scale,
-                          &checkoutParam));
-    PF_LayerDef *sourceInput = &checkoutParam.u.ld;
+                          &checkoutMyself));
+    PF_LayerDef *sourceInput = &checkoutMyself.u.ld;
     
     // Make new empty AEGP_WorldH
     AEGP_WorldH newWorld;
@@ -206,8 +219,16 @@ Render (
                                          ColorPixels, // pixel function pointer
                                          &tmpEffectWorld));
     
-    //Transform the effect world and composite over input
-    ERR(PF_COPY(&params[DROPSHADOW_INPUT]->u.ld, output, NULL, NULL));
+    //Transform the effect world and composite over "composite over layer"
+    PF_ParamDef checkoutComp;
+    AEFX_CLR_STRUCT(checkoutComp);
+    ERR(PF_CHECKOUT_PARAM(in_data,
+                          DROPSHADOW_COMP_LAYER,
+                          in_data->current_time,
+                          in_data->time_step,
+                          in_data->time_scale,
+                          &checkoutComp));
+    ERR(PF_COPY(&checkoutComp.u.ld, output, NULL, NULL));
     
     PF_CompositeMode blendMode;
     AEFX_CLR_STRUCT(blendMode);
@@ -263,7 +284,7 @@ Render (
     
     
     //Check in sourceInput
-    ERR(PF_CHECKIN_PARAM(in_data, &checkoutParam));
+    ERR(PF_CHECKIN_PARAM(in_data, &checkoutMyself));
     
     //Clean up worldH
     ERR(suites.WorldSuite3()->AEGP_Dispose(newWorld));

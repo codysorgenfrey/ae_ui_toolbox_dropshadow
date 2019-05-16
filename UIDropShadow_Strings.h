@@ -4,6 +4,7 @@ typedef enum {
 	StrID_NONE, 
 	StrID_Name,
 	StrID_Description,
+    StrID_Comp_Param_Name,
 	StrID_Blur_Param_Name,
 	StrID_Offsetx_Param_Name,
 	StrID_Offsety_Param_Name,

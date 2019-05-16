@@ -59,7 +59,8 @@ typedef short int			int16;
 
 enum {
 	DROPSHADOW_INPUT = 0,
-	DROPSHADOW_BLUR,
+	DROPSHADOW_COMP_LAYER,
+    DROPSHADOW_BLUR,
 	DROPSHADOW_OFFSETX,
 	DROPSHADOW_OFFSETY,
 	DROPSHADOW_COLOR,
@@ -69,7 +70,8 @@ enum {
 };
 
 enum {
-	BLUR_DISK_ID = 1,
+	COMP_DISK_ID = 1,
+    BLUR_DISK_ID,
 	OFFSETX_DISK_ID,
 	OFFSETY_DISK_ID,
 	COLOR_DISK_ID,
@@ -91,29 +93,6 @@ extern "C" {
 
 }
 
-//enum {
-//    BLEND_NORMAL = 2,
-//    PADDING1 = -1,
-//    BLEND_DARKEN = 10,
-//    BLEND_MULTIPLY = 5,
-//    BLEND_COLORBURN = 24,
-//    PADDING2 = -2,
-//    BLEND_LIGHTEN = 11,
-//    BLEND_SCREEN = 6,
-//    BLEND_COLORDODGE = 23,
-//    PADDING3 = -3,
-//    BLEND_OVERLAY = 7,
-//    BLEND_SOFTLIGHT = 8,
-//    BLEND_HARDLIGHT = 9,
-//    PADDING4 = -4,
-//    BLEND_DIFFERENCE = 12,
-//    BLEND_EXCLUSION = 25,
-//    PADDING5 = -5,
-//    BLEND_HUE = 13,
-//    BLEND_SATURATION = 14,
-//    BLEND_COLOR = 15,
-//    BLEND_LUMINOSITY = 16
-//};
 enum {
     BLEND_NORMAL = 1,
     PADDING1,
