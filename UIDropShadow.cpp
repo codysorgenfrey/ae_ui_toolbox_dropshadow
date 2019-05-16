@@ -31,7 +31,8 @@ GlobalSetup (
 										STAGE_VERSION, 
 										BUILD_VERSION);
 
-    out_data->out_flags =  PF_OutFlag_NONE;
+    out_data->out_flags =  PF_OutFlag_I_EXPAND_BUFFER;
+	out_data->out_flags2 = PF_OutFlag2_REVEALS_ZERO_ALPHA;
 	
 	return PF_Err_NONE;
 }
@@ -43,19 +44,63 @@ ParamsSetup (
 	PF_ParamDef		*params[],
 	PF_LayerDef		*output )
 {
-	PF_Err		err		= PF_Err_NONE;
+	PF_Err err = PF_Err_NONE;
 	PF_ParamDef	def; // used in the macros
 
-	PF_ADD_FLOAT_SLIDERX(	STR(StrID_Radius_Param_Name),
-							DROPSHADOW_RADIUS_MIN,
-							DROPSHADOW_RADIUS_MAX,
-							DROPSHADOW_RADIUS_MIN,
-							DROPSHADOW_RADIUS_MAX,
-							DROPSHADOW_RADIUS_DFLT,
-							PF_Precision_HUNDREDTHS,
-							0,
-							0,
-							RADIUS_DISK_ID);
+	//Blur
+	PF_ADD_FLOAT_SLIDERX(STR(StrID_Blur_Param_Name),
+		DROPSHADOW_BLUR_MIN,
+		DROPSHADOW_BLUR_MAX,
+		DROPSHADOW_BLUR_MIN,
+		DROPSHADOW_BLUR_MAX,
+		DROPSHADOW_BLUR_DFLT,
+		PF_Precision_HUNDREDTHS,
+		0,
+		0,
+		BLUR_DISK_ID);
+
+	//Offset x
+	PF_ADD_FLOAT_SLIDERX(STR(StrID_Offsetx_Param_Name),
+		DROPSHADOW_OFFSET_MIN,
+		DROPSHADOW_OFFSET_MAX,
+		DROPSHADOW_OFFSET_MIN,
+		DROPSHADOW_OFFSET_MAX,
+		DROPSHADOW_OFFSET_DFLT,
+		PF_Precision_HUNDREDTHS,
+		0,
+		0,
+		OFFSETX_DISK_ID);
+
+	//Offset y
+	PF_ADD_FLOAT_SLIDERX(STR(StrID_Offsety_Param_Name),
+		DROPSHADOW_OFFSET_MIN,
+		DROPSHADOW_OFFSET_MAX,
+		DROPSHADOW_OFFSET_MIN,
+		DROPSHADOW_OFFSET_MAX,
+		DROPSHADOW_OFFSET_DFLT,
+		PF_Precision_HUNDREDTHS,
+		0,
+		0,
+		OFFSETY_DISK_ID);
+
+	//Color
+	PF_ADD_COLOR(STR(StrID_Color_Param_Name),
+		DROPSHADOW_COLOR_R_DFLT,
+		DROPSHADOW_COLOR_G_DFLT, 
+		DROPSHADOW_COLOR_B_DFLT, 
+		COLOR_DISK_ID);
+
+	//Opacity
+	PF_ADD_PERCENT(STR(StrID_Opacity_Param_Name),
+		DROPSHADOW_OPACITY_DFLT,
+		OPACITY_DISK_ID);
+
+	//blend mode
+	PF_ADD_POPUP(STR(StrID_Blend_Param_Name), 
+		BLEND_LUMINOSITY,
+		BLEND_NORMAL,
+		(A_char*)STR(StrID_Blend_Options),
+		BLEND_DISK_ID);
 	
 	out_data->num_params = DROPSHADOW_NUM_PARAMS;
 
@@ -63,7 +108,7 @@ ParamsSetup (
 }
 
 static PF_Err
-CopyAlpha (
+KnockOut (
     void        *refcon,
     A_long        xL,
     A_long        yL,
@@ -71,7 +116,11 @@ CopyAlpha (
     PF_Pixel8    *outP)
 {
     PF_Err err = PF_Err_NONE;
-    outP->alpha = inP->alpha;
+	PixelInfo *pi = reinterpret_cast<PixelInfo*>(refcon);
+
+	outP = &pi->color;
+	if (inP->alpha > 0)
+		outP->alpha = 0;
     return err;
 }
 
@@ -84,57 +133,65 @@ Render (
 {
     AEGP_SuiteHandler suites(in_data->pica_basicP);
     PF_Err err = PF_Err_NONE;
-    PF_LayerDef *input = &params[DROPSHADOW_INPUT]->u.ld;
-    
-    if (params[DROPSHADOW_RADIUS]->u.fs_d.value){    // we're doing some blurring...
-        // Make new empty AEGP_WorldH
-        AEGP_WorldH newWorld;
-        ERR(suites.WorldSuite3()->AEGP_New(NULL, AEGP_WorldType_8, input->width, input->height, &newWorld));
-        
-        //Copy PF_EffectWorld data into new AEGP_World
-        A_u_long rowbytes = 0;
-        void *data = 0;
-        ERR(suites.WorldSuite3()->AEGP_GetRowBytes(newWorld, &rowbytes));
-        ERR(suites.WorldSuite3()->AEGP_GetBaseAddr8(newWorld, (PF_Pixel8**) &data));
-        
-        auto dst = (char*) data;
-        auto src = (char*) input->data;
-        for(int y=0; y<input->height; y++){
-            memcpy(dst, src, rowbytes);
-            src += input->rowbytes;
-            dst += rowbytes;
-        }
-        
-        //Blur the AEGP_World
-        ERR(suites.WorldSuite3()->AEGP_FastBlur((A_FpLong)params[DROPSHADOW_RADIUS]->u.fs_d.value,
-                                                PF_MF_Alpha_STRAIGHT,
-                                                PF_Quality_HI,
-                                                newWorld));
-        
-        //Convert the AEGP_World data into a PF_EffectWorld
-        PF_EffectWorld tmpEffectWorld;
-        ERR(suites.WorldSuite3()->AEGP_FillOutPFEffectWorld(newWorld, &tmpEffectWorld));
-        
-        //Copy input's alpha into the effectworld
-        ERR(suites.Iterate8Suite1()->iterate(in_data,
-                                             0, // progress base
-                                             input->height, // progress final
-                                             input, // src
-                                             NULL, // area - null for all pixels
-                                             NULL, // refcon - your custom data pointer
-                                             CopyAlpha, // pixel function pointer
-                                             &tmpEffectWorld));
-        
-        //Copy the tmpEffectWorld to the output LayerDef
-        ERR(PF_COPY(&tmpEffectWorld, output, NULL, NULL));
-        
-        //Clean up worldH
-        ERR(suites.WorldSuite3()->AEGP_Dispose(newWorld));
-        
-    } else {
-        ERR(PF_COPY(input, output, NULL, NULL));
-    }
+    //PF_LayerDef *input = &params[DROPSHADOW_INPUT]->u.ld;
+	
+	//Check out myself for input to get original layer alpha for stackability
+	AEGP_RenderOptionsH renderOptionsH;
 
+	AEGP_FrameReceiptH frameRecieptH;
+	ERR(suites.RenderSuite4()->AEGP_RenderAndCheckoutFrame(renderOptionsH,
+		NULL,
+		NULL,
+		&frameRecieptH));
+
+    // Make new empty AEGP_WorldH
+    AEGP_WorldH newWorld;
+    ERR(suites.WorldSuite3()->AEGP_New(NULL, AEGP_WorldType_8, input->width, input->height, &newWorld));
+        
+    //Copy PF_EffectWorld data into new AEGP_World
+    A_u_long rowbytes = 0;
+    void *data = 0;
+    ERR(suites.WorldSuite3()->AEGP_GetRowBytes(newWorld, &rowbytes));
+    ERR(suites.WorldSuite3()->AEGP_GetBaseAddr8(newWorld, (PF_Pixel8**) &data));
+        
+    auto dst = (char*) data;
+    auto src = (char*) input->data;
+    for(int y=0; y<input->height; y++){
+        memcpy(dst, src, rowbytes);
+        src += input->rowbytes;
+        dst += rowbytes;
+    }
+        
+    //Blur the AEGP_World
+    ERR(suites.WorldSuite3()->AEGP_FastBlur((A_FpLong)params[DROPSHADOW_BLUR]->u.fs_d.value,
+                                            PF_MF_Alpha_STRAIGHT,
+                                            PF_Quality_HI,
+                                            newWorld));
+        
+    //Convert the AEGP_World data into a PF_EffectWorld
+    PF_EffectWorld tmpEffectWorld;
+    ERR(suites.WorldSuite3()->AEGP_FillOutPFEffectWorld(newWorld, &tmpEffectWorld));
+        
+    //Knock out input's alpha in the effectworld and color pixels
+	PixelInfo pi;
+	AEFX_CLR_STRUCT(pi);
+	pi.color = params[DROPSHADOW_COLOR]->u.cd.value;
+
+    ERR(suites.Iterate8Suite1()->iterate(in_data,
+                                            0, // progress base
+                                            input->height, // progress final
+                                            input, // src
+                                            NULL, // area - null for all pixels
+                                            (void*)&pi, // refcon - your custom data pointer
+                                            KnockOut, // pixel function pointer
+                                            &tmpEffectWorld));
+        
+    //Copy the tmpEffectWorld to the output LayerDef
+    ERR(PF_COPY(&tmpEffectWorld, output, NULL, NULL));
+        
+    //Clean up worldH
+    ERR(suites.WorldSuite3()->AEGP_Dispose(newWorld));
+	
 	return err;
 }
 
@@ -212,4 +269,3 @@ EffectMain(
 	}
 	return err;
 }
-
