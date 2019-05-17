@@ -271,7 +271,7 @@ Render (
                                             shapeLayer->height, // progress final
                                             shapeLayer, // src
                                             NULL, // area - null for all pixels
-											NULL, // refcon - your custom data pointer
+                                            NULL, // refcon - your custom data pointer
                                             KnockOut, // pixel function pointer
                                             output));
 
@@ -294,7 +294,6 @@ Render (
 	
 	return err;
 }
-
 
 extern "C" DllExport
 PF_Err PluginDataEntryFunction(
@@ -332,7 +331,6 @@ EffectMain(
 	try {
 		switch (cmd) {
 			case PF_Cmd_ABOUT:
-
 				err = About(in_data,
 							out_data,
 							params,
@@ -340,7 +338,6 @@ EffectMain(
 				break;
 				
 			case PF_Cmd_GLOBAL_SETUP:
-
 				err = GlobalSetup(	in_data,
 									out_data,
 									params,
@@ -348,7 +345,6 @@ EffectMain(
 				break;
 				
 			case PF_Cmd_PARAMS_SETUP:
-
 				err = ParamsSetup(	in_data,
 									out_data,
 									params,
@@ -356,7 +352,6 @@ EffectMain(
 				break;
 				
 			case PF_Cmd_RENDER:
-
 				err = Render(	in_data,
 								out_data,
 								params,
